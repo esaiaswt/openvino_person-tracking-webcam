@@ -579,8 +579,10 @@ source = cam_id if USE_WEBCAM else video_file
 processing_times = collections.deque()
 while True:
     # Grab the frame.
-    frame = camera_input_live()
-    if frame is None:
+    image = camera_input_live()
+    uploaded_image = PIL.Image.open(image)
+    frame = cv2.cvtColor(numpy.array(uploaded_image), cv2.COLOR_RGB2BGR)
+    if image is None:
         print("Source ended")
         break
     # If the frame is larger than full HD, reduce size to improve the performance.
