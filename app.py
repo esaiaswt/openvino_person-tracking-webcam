@@ -93,6 +93,8 @@ from IPython import display
 import matplotlib.pyplot as plt
 import openvino as ov
 
+from camera_input_live import camera_input_live
+
 # Import local modules
 
 if not Path("./notebook_utils.py").exists():
@@ -576,3 +578,8 @@ video_file = "https://storage.openvinotoolkit.org/repositories/openvino_notebook
 source = cam_id if USE_WEBCAM else video_file
 
 run_person_tracking(source=source, flip=USE_WEBCAM, use_popup=False)
+
+st.set_page_config(
+    page_title="Openvino Person Tracking",
+    page_icon=":coffee:",
+    layout="wide")
