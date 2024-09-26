@@ -212,16 +212,16 @@ class Model:
 select device from dropdown list for running inference using OpenVINO
 """
 
-import ipywidgets as widgets
+#import ipywidgets as widgets
 
-device = widgets.Dropdown(
-    options=core.available_devices + ["AUTO"],
-    value="AUTO",
-    description="Device:",
-    disabled=False,
-)
+#device = widgets.Dropdown(
+#    options=core.available_devices + ["AUTO"],
+#    value="AUTO",
+#    description="Device:",
+#    disabled=False,
+#)
 
-device
+device = "AUTO"
 
 detector = Model(detection_model_path, device=device.value)
 # since the number of detection object is uncertain, the input batch size of reid model should be dynamic
