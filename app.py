@@ -86,6 +86,7 @@ import matplotlib.pyplot as plt
 import openvino as ov
 
 from camera_input_live import camera_input_live
+import streamlit as st
 # Import local modules
 
 if not Path("./notebook_utils.py").exists():
