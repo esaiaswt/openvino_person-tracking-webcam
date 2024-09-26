@@ -371,7 +371,8 @@ for ax, (name, image) in zip(axs, data.items()):
     ax.imshow(image)
 
 # Display an image.
-plt.show(fig)
+#plt.show(fig)
+st.pyplot(fig)
 
 """### Compare two persons
 [back to top ⬆️](#Table-of-contents:)
