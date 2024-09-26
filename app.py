@@ -130,20 +130,20 @@ precision = "FP16"
 # The name of the model from Open Model Zoo
 detection_model_name = "person-detection-0202"
 
-download_command = (
-    f"omz_downloader " f"--name {detection_model_name} " f"--precisions {precision} " f"--output_dir {base_model_dir} " f"--cache_dir {base_model_dir}"
-)
-! $download_command
+#download_command = (
+#    f"omz_downloader " f"--name {detection_model_name} " f"--precisions {precision} " f"--output_dir {base_model_dir} " f"--cache_dir {base_model_dir}"
+#)
+#! $download_command
 
 detection_model_path = f"model/intel/{detection_model_name}/{precision}/{detection_model_name}.xml"
 
 
 reidentification_model_name = "person-reidentification-retail-0287"
 
-download_command = (
-    f"omz_downloader " f"--name {reidentification_model_name} " f"--precisions {precision} " f"--output_dir {base_model_dir} " f"--cache_dir {base_model_dir}"
-)
-! $download_command
+#download_command = (
+#    f"omz_downloader " f"--name {reidentification_model_name} " f"--precisions {precision} " f"--output_dir {base_model_dir} " f"--cache_dir {base_model_dir}"
+#)
+#! $download_command
 
 reidentification_model_path = f"model/intel/{reidentification_model_name}/{precision}/{reidentification_model_name}.xml"
 
