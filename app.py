@@ -221,11 +221,11 @@ select device from dropdown list for running inference using OpenVINO
 #    disabled=False,
 #)
 
-device = "AUTO"
+#device = "AUTO"
 
-detector = Model(detection_model_path, device=device.value)
+detector = Model(detection_model_path, device="AUTO")
 # since the number of detection object is uncertain, the input batch size of reid model should be dynamic
-extractor = Model(reidentification_model_path, -1, device.value)
+extractor = Model(reidentification_model_path, -1, "AUTO")
 
 """## Data Processing
 [back to top ⬆️](#Table-of-contents:)
