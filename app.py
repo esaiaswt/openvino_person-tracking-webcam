@@ -93,6 +93,7 @@ from IPython import display
 import matplotlib.pyplot as plt
 import openvino as ov
 
+from camera_input_live import camera_input_live
 # Import local modules
 
 if not Path("./notebook_utils.py").exists():
@@ -580,6 +581,92 @@ st.set_page_config(
     page_icon=":coffee:",
     layout="wide")
 
-run_person_tracking(source=source, flip=USE_WEBCAM, use_popup=False)
+#run_person_tracking(source=source, flip=USE_WEBCAM, use_popup=False)
+processing_times = collections.deque()
+while True:
+    # Grab the frame.
+    frame = camera_input_live()
+    if frame is None:
+        print("Source ended")
+        break
+    # If the frame is larger than full HD, reduce size to improve the performance.
+
+    # Resize the image and change dims to fit neural network input.
+    h, w = frame.shape[:2]
+    input_image = preprocess(frame, detector.height, detector.width)
+
+    # Measure processing time.
+    start_time = time.time()
+    # Get the results.
+    output = detector.predict(input_image)
+    stop_time = time.time()
+    processing_times.append(stop_time - start_time)
+    if len(processing_times) > 200:
+        processing_times.popleft()
+
+    _, f_width = frame.shape[:2]
+    # Mean processing time [ms].
+    processing_time = np.mean(processing_times) * 1100
+    fps = 1000 / processing_time
+
+    # Get poses from detection results.
+    bbox_xywh, score, label = process_results(h, w, results=output)
+
+    img_crops = []
+    for box in bbox_xywh:
+        x1, y1, x2, y2 = xywh_to_xyxy(box, h, w)
+        img = frame[y1:y2, x1:x2]
+        img_crops.append(img)
+
+    # Get reidentification feature of each person.
+    if img_crops:
+        # preprocess
+        img_batch = batch_preprocess(img_crops, extractor.height, extractor.width)
+        features = extractor.predict(img_batch)
+    else:
+        features = np.array([])
+
+    # Wrap the detection and reidentification results together
+    bbox_tlwh = xywh_to_tlwh(bbox_xywh)
+    detections = [Detection(bbox_tlwh[i], features[i]) for i in range(features.shape[0])]
+
+    # predict the position of tracking target
+    tracker.predict()
+
+    # update tracker
+    tracker.update(detections)
+
+    # update bbox identities
+    outputs = []
+    for track in tracker.tracks:
+        if not track.is_confirmed() or track.time_since_update > 1:
+            continue
+        box = track.to_tlwh()
+        x1, y1, x2, y2 = tlwh_to_xyxy(box, h, w)
+        track_id = track.track_id
+        outputs.append(np.array([x1, y1, x2, y2, track_id], dtype=np.int32))
+    if len(outputs) > 0:
+        outputs = np.stack(outputs, axis=0)
+
+    # draw box for visualization
+    if len(outputs) > 0:
+        bbox_tlwh = []
+        bbox_xyxy = outputs[:, :4]
+        identities = outputs[:, -1]
+        frame = draw_boxes(frame, bbox_xyxy, identities)
+
+    cv2.putText(
+        img=frame,
+        text=f"Inference time: {processing_time:.1f}ms ({fps:.1f} FPS)",
+        org=(20, 40),
+        fontFace=cv2.FONT_HERSHEY_COMPLEX,
+        fontScale=f_width / 1000,
+        color=(0, 0, 255),
+        thickness=1,
+        lineType=cv2.LINE_AA,
+    )
+
+    st.image(frame, channels = "BGR")
+
 
 
