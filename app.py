@@ -93,8 +93,6 @@ from IPython import display
 import matplotlib.pyplot as plt
 import openvino as ov
 
-from camera_input_live import camera_input_live
-
 # Import local modules
 
 if not Path("./notebook_utils.py").exists():
