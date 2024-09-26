@@ -570,10 +570,10 @@ cam_id = 0
 video_file = "https://storage.openvinotoolkit.org/repositories/openvino_notebooks/data/data/video/people.mp4"
 source = cam_id if USE_WEBCAM else video_file
 
-st.set_page_config(
-    page_title="Openvino Person Tracking",
-    page_icon=":coffee:",
-    layout="wide")
+#st.set_page_config(
+#    page_title="Openvino Person Tracking",
+#    page_icon=":coffee:",
+#    layout="wide")
 
 #run_person_tracking(source=source, flip=USE_WEBCAM, use_popup=False)
 processing_times = collections.deque()
