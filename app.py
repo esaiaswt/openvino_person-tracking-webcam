@@ -1,11 +1,6 @@
 # Commented out IPython magic to ensure Python compatibility.
 import platform
 
-''' ## Imports
-[back to top ⬆️](#Table-of-contents:)
-
-'''
-
 import collections
 from pathlib import Path
 import time
