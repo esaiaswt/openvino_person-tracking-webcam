@@ -70,10 +70,10 @@ For details, please refer to [Installation Guide](https://github.com/openvinotoo
 # Commented out IPython magic to ensure Python compatibility.
 import platform
 
-"""## Imports
+'''## Imports
 [back to top ⬆️](#Table-of-contents:)
 
-"""
+'''
 
 import collections
 from pathlib import Path
@@ -112,7 +112,7 @@ from deepsort_utils.detection import (
     tlwh_to_xyxy,
 )
 
-"""## Download the Model
+'''## Download the Model
 [back to top ⬆️](#Table-of-contents:)
 
 We will use pre-trained models from OpenVINO's [Open Model Zoo](https://docs.openvino.ai/2024/documentation/legacy-features/model-zoo.html) to start the test.
@@ -125,7 +125,7 @@ In this case, [person detection model]( https://docs.openvino.ai/2024/omz_models
 
 
 If you want to download another model (`person-detection-xxx` from [Object Detection Models list](https://docs.openvino.ai/2024/omz_models_group_intel.html#object-detection-models), `person-reidentification-retail-xxx` from [Reidentification Models list](https://docs.openvino.ai/2024/omz_models_group_intel.html#reidentification-models)), replace the name of the model in the code below.
-"""
+'''
 
 # A directory where the model will be downloaded.
 base_model_dir = "model"
@@ -150,7 +150,7 @@ reidentification_model_name = "person-reidentification-retail-0287"
 
 reidentification_model_path = f"model/intel/{reidentification_model_name}/{precision}/{reidentification_model_name}.xml"
 
-"""## Load model
+'''## Load model
 [back to top ⬆️](#Table-of-contents:)
 
 Define a common class for model loading and predicting.
@@ -164,19 +164,19 @@ There are four main steps for OpenVINO model initialization, and they are requir
 In this case, we can put them all in a class constructor function.
 
 To let OpenVINO automatically select the best device for inference just use `AUTO`. In most cases, the best device to use is `GPU` (better performance, but slightly longer startup time).
-"""
+'''
 
 core = ov.Core()
 
 
 class Model:
-    """
+    '''
     This class represents a OpenVINO model object.
 
-    """
+    '''
 
     def __init__(self, model_path, batchsize=1, device="AUTO"):
-        """
+        '''
         Initialize the model object
 
         Parameters
@@ -184,7 +184,7 @@ class Model:
         model_path: path of inference model
         batchsize: batch size of input data
         device: device used to run inference
-        """
+        '''
         self.model = core.read_model(model=model_path)
         self.input_layer = self.model.input(0)
         self.input_shape = self.input_layer.shape
@@ -199,21 +199,21 @@ class Model:
         self.output_layer = self.compiled_model.output(0)
 
     def predict(self, input):
-        """
+        '''
         Run inference
 
         Parameters
         ----------
         input: array of input data
-        """
+        '''
         result = self.compiled_model(input)[self.output_layer]
         return result
 
-"""### Select inference device
+'''### Select inference device
 [back to top ⬆️](#Table-of-contents:)
 
 select device from dropdown list for running inference using OpenVINO
-"""
+'''
 
 #import ipywidgets as widgets
 
@@ -230,16 +230,16 @@ detector = Model(detection_model_path, device="AUTO")
 # since the number of detection object is uncertain, the input batch size of reid model should be dynamic
 extractor = Model(reidentification_model_path, -1, "AUTO")
 
-"""## Data Processing
+'''## Data Processing
 [back to top ⬆️](#Table-of-contents:)
 
 Data Processing includes data preprocess and postprocess functions.
 - Data preprocess function is used to change the layout and shape of input data, according to requirement of the network input format.
 - Data postprocess function is used to extract the useful information from network's original output and visualize it.
-"""
+'''
 
 def preprocess(frame, height, width):
-    """
+    '''
     Preprocess a single image
 
     Parameters
@@ -247,7 +247,7 @@ def preprocess(frame, height, width):
     frame: input frame
     height: height of model input data
     width: width of model input data
-    """
+    '''
     resized_image = cv2.resize(frame, (width, height))
     resized_image = resized_image.transpose((2, 0, 1))
     input_image = np.expand_dims(resized_image, axis=0).astype(np.float32)
@@ -255,7 +255,7 @@ def preprocess(frame, height, width):
 
 
 def batch_preprocess(img_crops, height, width):
-    """
+    '''
     Preprocess batched images
 
     Parameters
@@ -263,13 +263,13 @@ def batch_preprocess(img_crops, height, width):
     img_crops: batched input images
     height: height of model input data
     width: width of model input data
-    """
+    '''
     img_batch = np.concatenate([preprocess(img, height, width) for img in img_crops], axis=0)
     return img_batch
 
 
 def process_results(h, w, results, thresh=0.5):
-    """
+    '''
     postprocess detection results
 
     Parameters
@@ -277,7 +277,7 @@ def process_results(h, w, results, thresh=0.5):
     h, w: original height and width of input image
     results: raw detection network output
     thresh: threshold for low confidence filtering
-    """
+    '''
     # The 'results' variable is a [1, 1, N, 7] tensor.
     detections = results.reshape(-1, 7)
     boxes = []
@@ -307,7 +307,7 @@ def process_results(h, w, results, thresh=0.5):
 
 
 def draw_boxes(img, bbox, identities=None):
-    """
+    '''
     Draw bounding box in original image
 
     Parameters
@@ -315,7 +315,7 @@ def draw_boxes(img, bbox, identities=None):
     img: original image
     bbox: coordinate of bounding box
     identities: identities IDs
-    """
+    '''
     for i, box in enumerate(bbox):
         x1, y1, x2, y2 = [int(i) for i in box]
         # box text and bar
@@ -338,23 +338,23 @@ def draw_boxes(img, bbox, identities=None):
 
 
 def cosin_metric(x1, x2):
-    """
+    '''
     Calculate the consin distance of two vector
 
     Parameters
     ----------
     x1, x2: input vectors
-    """
+    '''
     return np.dot(x1, x2) / (np.linalg.norm(x1) * np.linalg.norm(x2))
 
-"""## Test person reidentification model
+'''## Test person reidentification model
 [back to top ⬆️](#Table-of-contents:)
 
 The reidentification network outputs a blob with the `(1, 256)` shape named `reid_embedding`, which can be compared with other descriptors using the cosine distance.
 
 ### Visualize data
 [back to top ⬆️](#Table-of-contents:)
-"""
+'''
 
 base_file_link = "https://storage.openvinotoolkit.org/repositories/openvino_notebooks/data/data/image/person_"
 image_indices = ["1_1.png", "1_2.png", "2_1.png"]
@@ -377,10 +377,10 @@ for ax, (name, image) in zip(axs, data.items()):
 #plt.show(fig)
 st.pyplot(fig)
 
-"""### Compare two persons
+'''### Compare two persons
 [back to top ⬆️](#Table-of-contents:)
 
-"""
+'''
 
 # Metric parameters
 MAX_COSINE_DISTANCE = 0.6  # threshold of matching object
@@ -393,15 +393,15 @@ if sim >= 1 - MAX_COSINE_DISTANCE:
 else:
     print(f"Different person (confidence: {sim})")
 
-"""## Main Processing Function
+'''## Main Processing Function
 [back to top ⬆️](#Table-of-contents:)
 
 Run person tracking on the specified source. Either a webcam feed or a video file.
-"""
+'''
 
 # Main processing function to run person tracking.
 def run_person_tracking(source=0, flip=False, use_popup=False, skip_first_frames=0):
-    """
+    '''
     Main function to run the person tracking:
     1. Create a video player to play with target fps (utils.VideoPlayer).
     2. Prepare a set of frames for person tracking.
@@ -414,7 +414,7 @@ def run_person_tracking(source=0, flip=False, use_popup=False, skip_first_frames
         flip: To be used by VideoPlayer function for flipping capture image.
         use_popup: False for showing encoded frames over this notebook, True for creating a popup window.
         skip_first_frames: Number of frames to skip at the beginning of the video.
-    """
+    '''
     player = None
     try:
         # Create a video player to play with target fps.
@@ -543,7 +543,7 @@ def run_person_tracking(source=0, flip=False, use_popup=False, skip_first_frames
         if use_popup:
             cv2.destroyAllWindows()
 
-"""## Run
+'''## Run
 [back to top ⬆️](#Table-of-contents:)
 
 ### Initialize tracker
@@ -551,20 +551,20 @@ def run_person_tracking(source=0, flip=False, use_popup=False, skip_first_frames
 
 Before running a new tracking task, we have to reinitialize a Tracker object
 
-"""
+'''
 
 NN_BUDGET = 100
 MAX_COSINE_DISTANCE = 0.6  # threshold of matching object
 metric = NearestNeighborDistanceMetric("cosine", MAX_COSINE_DISTANCE, NN_BUDGET)
 tracker = Tracker(metric, max_iou_distance=0.7, max_age=70, n_init=3)
 
-"""### Run Live Person Tracking
+'''### Run Live Person Tracking
 [back to top ⬆️](#Table-of-contents:)
 
 Use a webcam as the video input. By default, the primary webcam is set with `source=0`. If you have multiple webcams, each one will be assigned a consecutive number starting at 0. Set `flip=True` when using a front-facing camera. Some web browsers, especially Mozilla Firefox, may cause flickering. If you experience flickering, set `use_popup=True`.
 
 If you do not have a webcam, you can still run this demo with a video file. Any [format supported by OpenCV](https://docs.opencv.org/4.5.1/dd/d43/tutorial_py_video_display.html) will work.
-"""
+'''
 
 USE_WEBCAM = True
 
