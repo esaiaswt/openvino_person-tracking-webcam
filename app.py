@@ -434,8 +434,9 @@ processing_times = collections.deque()
 while True:
     # Grab the frame.
     image = camera_input_live()
-    uploaded_image = PIL.Image.open(image)
-    frame = cv2.cvtColor(numpy.array(uploaded_image), cv2.COLOR_RGB2BGR)
+    #uploaded_image = PIL.Image.open(image)
+    #frame = cv2.cvtColor(numpy.array(uploaded_image), cv2.COLOR_RGB2BGR)
+    frame = cv2.cvtColor(numpy.array(image), cv2.COLOR_RGB2BGR)
     if image is None:
         print("Source ended")
         break
