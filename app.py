@@ -87,6 +87,8 @@ import openvino as ov
 
 from camera_input_live import camera_input_live
 import streamlit as st
+
+import PIL
 # Import local modules
 
 if not Path("./notebook_utils.py").exists():
