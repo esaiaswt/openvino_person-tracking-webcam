@@ -22,6 +22,7 @@ import openvino as ov
 from openvino.runtime.passes import Manager, MatcherPass, WrapType, Matcher
 from openvino.runtime import opset10 as ops
 
+from camera_input_live import camera_input_live
 
 # ## Files
 #
@@ -262,7 +263,7 @@ class VideoPlayer:
         import cv2
 
         self.cv2 = cv2  # This is done to access the package in class methods
-        self.__cap = cv2.VideoCapture(source)
+        self.__cap = camera_input_live()    #cv2.VideoCapture(source)
         # try HD by default to get better video quality
         self.__cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         self.__cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
