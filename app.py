@@ -569,7 +569,7 @@ Use a webcam as the video input. By default, the primary webcam is set with `sou
 If you do not have a webcam, you can still run this demo with a video file. Any [format supported by OpenCV](https://docs.opencv.org/4.5.1/dd/d43/tutorial_py_video_display.html) will work.
 """
 
-USE_WEBCAM = False
+USE_WEBCAM = True
 
 cam_id = 0
 video_file = "https://storage.openvinotoolkit.org/repositories/openvino_notebooks/data/data/video/people.mp4"
