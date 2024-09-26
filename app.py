@@ -432,7 +432,7 @@ source = cam_id if USE_WEBCAM else video_file
 #run_person_tracking(source=source, flip=USE_WEBCAM, use_popup=False)
 processing_times = collections.deque()
 while True:
-    # Grab the frame.
+    # Grab the frame. 
     image = camera_input_live()
     #uploaded_image = PIL.Image.open(image)
     #frame = cv2.cvtColor(numpy.array(uploaded_image), cv2.COLOR_RGB2BGR)
