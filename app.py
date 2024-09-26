@@ -70,14 +70,6 @@ For details, please refer to [Installation Guide](https://github.com/openvinotoo
 # Commented out IPython magic to ensure Python compatibility.
 import platform
 
-# %pip install -q "openvino-dev>=2024.0.0"
-# %pip install -q opencv-python requests scipy tqdm
-
-if platform.system() != "Windows":
-#     %pip install -q "matplotlib>=3.4"
-else:
-#     %pip install -q "matplotlib>=3.4,<3.7"
-
 """## Imports
 [back to top ⬆️](#Table-of-contents:)
 
